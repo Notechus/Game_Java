@@ -17,7 +17,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE = "Game Client Pre-Aplha 0.01";
+	public static final String TITLE = "Game Client Pre-Alpha 0.01";
 
 	private Thread thread;
 	private boolean running = false;
@@ -98,6 +98,7 @@ public class Display extends Canvas implements Runnable {
 		frame.setLocationRelativeTo(null);
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setResizable(false);
+		frame.setLocation((WIDTH) / 2, (HEIGHT - 256) / 2); // middle
 		frame.setVisible(true);
 
 		// start game

@@ -16,7 +16,15 @@ public class Screen extends Render {
 	}
 
 	public void render() {
-		draw(test, 0, 0);
+		for (int i = 0; i < getWidth() * getHeight(); i++) {
+			pixels[i] = 0; // it will remove trace of moving object
+		}
+		for (int i = 0; i < 100; i++) {
+			int anim = (int) (Math.sin((System.currentTimeMillis() + i * 4) % 2000.0 / 2000.0 * Math.PI * 2) * 200);
+			int anim2 = (int) (Math.cos((System.currentTimeMillis() + i * 4) % 2000.0 / 2000.0 * Math.PI * 2) * 200);
+
+			draw(test, (getWidth() - 256) / 2 + anim, (getHeight() - 256) / 2 - anim2);
+		}
 	}
 
 }
