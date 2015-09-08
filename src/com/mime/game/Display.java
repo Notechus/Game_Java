@@ -1,6 +1,7 @@
 package com.mime.game;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -17,7 +18,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE = "Game Client Pre-Alpha 0.01";
+	public static final String TITLE = "Game Client Pre-Alpha 0.02";
 
 	private Thread thread;
 	private boolean running = false;
@@ -26,12 +27,17 @@ public class Display extends Canvas implements Runnable {
 	private BufferedImage img;
 	private Screen screen;
 	private int[] pixels;
+	private Game game;
 
 	public Display() {
-		// render = new Render(WIDTH, HEIGHT);
+		Dimension size = new Dimension(WIDTH, HEIGHT);
+		setPreferredSize(size);
+		setMinimumSize(size);
+		setMaximumSize(size);
 		screen = new Screen(WIDTH, HEIGHT);
 		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+		game = new Game();
 
 	}
 
@@ -56,14 +62,40 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	public void run() {
+		// init fps
+		int frames = 0;
+		double unprocessedSeconds = 0;
+		long previousTime = System.nanoTime();
+		double secondsPerTick = 1 / 60.0;
+		int tickCount = 0;
+		boolean ticked = false;
 		while (running) {
-			tick();
+			long currentTime = System.nanoTime();
+			long passedTime = currentTime - previousTime;
+			previousTime = currentTime;
+			unprocessedSeconds += passedTime / 1000000000.0;
+			while (unprocessedSeconds > secondsPerTick) {
+				tick();
+				unprocessedSeconds -= secondsPerTick;
+				ticked = true;
+				tickCount++;
+				if (tickCount % 60 == 0) {
+					System.out.println(frames + "fps");
+					previousTime += 1000;
+					frames = 0;
+				}
+			}
+			if (ticked) {
+				render();
+				frames++;
+			}
 			render();
+			frames++;
 		}
 	}
 
 	public void tick() {
-
+		game.tick();
 	}
 
 	public void render() {
@@ -74,14 +106,14 @@ public class Display extends Canvas implements Runnable {
 		}
 
 		// render screen
-		screen.render();
+		screen.render(game);
 
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			pixels[i] = screen.pixels[i];
 		}
 
 		Graphics g = bs.getDrawGraphics();
-		g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+		g.drawImage(img, 0, 0, WIDTH + 10, HEIGHT + 10, null);
 		g.dispose();
 		bs.show();
 	}
@@ -96,7 +128,7 @@ public class Display extends Canvas implements Runnable {
 		// init frame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-		frame.setSize(WIDTH, HEIGHT);
+		// frame.setSize(WIDTH, HEIGHT);
 		frame.setResizable(false);
 		frame.setLocation((WIDTH) / 2, (HEIGHT - 256) / 2); // middle
 		frame.setVisible(true);

@@ -2,28 +2,36 @@ package com.mime.game.graphics;
 
 import java.util.Random;
 
+import com.mime.game.Game;
+
 public class Screen extends Render {
 
 	private Render test;
+	private Render3D render;
 
 	public Screen(int width, int height) {
 		super(width, height);
 		Random random = new Random();
+		render = new Render3D(width, height);
 		test = new Render(256, 256);
 		for (int i = 0; i < 256 * 256; i++) {
-			test.pixels[i] = random.nextInt();
+			test.pixels[i] = random.nextInt() * (random.nextInt(5) / 4);
 		}
 	}
 
-	public void render() {
+	public void render(Game game) {
 		for (int i = 0; i < getWidth() * getHeight(); i++) {
 			pixels[i] = 0; // it will remove trace of moving object
 		}
-		for (int i = 0; i < 100; i++) {
-			int anim = (int) (Math.sin((System.currentTimeMillis() + i * 4) % 2000.0 / 2000.0 * Math.PI * 2) * 200);
-			int anim2 = (int) (Math.cos((System.currentTimeMillis() + i * 4) % 2000.0 / 2000.0 * Math.PI * 2) * 200);
+		for (int i = 0; i < 50; i++) {
 
-			draw(test, (getWidth() - 256) / 2 + anim, (getHeight() - 256) / 2 - anim2);
+			int anim = (int) (Math.sin((game.getTime() + i * 2) % 1000.0 / 100) * 100);
+			int anim2 = (int) (Math.cos((game.getTime() + i * 2) % 1000.0 / 100) * 100);
+
+			// draw(test, (getWidth() - 256) / 2 + anim, (getHeight() - 256) / 2
+			// + anim2);
+			render.floor();
+			draw(render, 0, 0);
 		}
 	}
 
