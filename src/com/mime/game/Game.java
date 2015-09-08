@@ -7,10 +7,10 @@ import com.mime.game.input.Controller;
 public class Game {
 
 	private int time;
-	private Controller controls;
+	public Controller controls;
 
 	public Game() {
-
+		controls = new Controller();
 	}
 
 	public void tick(boolean[] key) {

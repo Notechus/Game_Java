@@ -20,7 +20,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE = "Game Client Pre-Alpha 0.02";
+	public static final String TITLE = "Game Client Pre-Alpha 0.03";
 
 	private Thread thread;
 	private boolean running = false;

@@ -4,8 +4,12 @@ import com.mime.game.Game;
 
 public class Render3D extends Render {
 
+	public double[] zBuffer;
+	private static final double renderDistance = 5000.0;
+
 	public Render3D(int width, int height) {
 		super(width, height);
+		zBuffer = new double[width * height];
 	}
 
 	public void floor(Game game) {
@@ -15,11 +19,11 @@ public class Render3D extends Render {
 		double ceilingPosition = 8;
 
 		// movement, we can add this to xx and yy to get movement
-		double forward = game.getTime() / 5.0;
-		double right = game.getTime() / 5.0;
+		double forward = game.controls.getZ();
+		double right = game.controls.getX();
 
 		// rotation stuff
-		double rotation = 0;// = game.getTime() / 100.0;
+		double rotation = game.controls.getRotation();
 		double cosine = Math.cos(rotation);
 		double sine = Math.sin(rotation);
 
@@ -29,7 +33,6 @@ public class Render3D extends Render {
 			double z = floorPosition / ceiling;
 
 			if (ceiling < 0) {
-				// ceiling = -ceiling;
 				z = ceilingPosition / -ceiling; // allows us to control height of ceiling
 			}
 
@@ -38,10 +41,39 @@ public class Render3D extends Render {
 				depth *= z;
 				double xx = depth * cosine + z * sine; // rotation thingy(sin & cos)
 				double yy = z * cosine - depth * sine;
-				int xPix = (int) (xx);
-				int yPix = (int) (yy);
+
+				// xx and yy casted to int and added movement
+				int xPix = (int) (xx + right);
+				int yPix = (int) (yy + forward);
+
+				zBuffer[x + y * width] = z;
 				pixels[x + y * width] = ((xPix & 15) * 16) | ((yPix & 15) * 16) << 8;
+
+				if (z > renderDistance) {
+					pixels[x + y * width] = 0;
+				}
 			}
+		}
+	}
+
+	public void renderDistanceLimiter() {
+		for (int i = 0; i < width * height; i++) {
+			int color = pixels[i];
+			int brightness = (int) (renderDistance / (zBuffer[i]));
+
+			if (brightness < 0) {
+				brightness = 0;
+			}
+
+			if (brightness > 255) {
+				brightness = 255;
+			}
+
+			int r = ((color >> 16) & 0xff) * brightness / 255;
+			int g = ((color >> 8) & 0xff) * brightness / 255;
+			int b = ((color) & 0xff) * brightness / 255;
+
+			pixels[i] = r << 16 | g << 8 | b;
 		}
 	}
 }
