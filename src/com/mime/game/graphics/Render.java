@@ -38,7 +38,6 @@ public class Render {
 				int alpha = render.pixels[x + y * render.getWidth()];
 				if (alpha > 0) { // if alpha > 0 then render
 					pixels[xPix + yPix * width] = render.pixels[x + y * render.getWidth()];
-					// System.out.println("x: " + x + " y: " + y);
 				}
 			}
 		}

@@ -11,7 +11,9 @@ import javax.swing.JFrame;
 
 import com.mime.game.graphics.Render;
 import com.mime.game.graphics.Screen;
+import com.mime.game.input.InputHandler;
 
+@SuppressWarnings("unused")
 public class Display extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
@@ -27,17 +29,33 @@ public class Display extends Canvas implements Runnable {
 	private BufferedImage img;
 	private Screen screen;
 	private int[] pixels;
+
+	// utils stuff
 	private Game game;
+	private InputHandler input;
 
 	public Display() {
 		Dimension size = new Dimension(WIDTH, HEIGHT);
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
+
 		screen = new Screen(WIDTH, HEIGHT);
 		img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+
 		game = new Game();
+
+		// input init
+		input = new InputHandler();
+		addKeyListener(input);
+		addFocusListener(input);
+		addMouseListener(input);
+		addMouseMotionListener(input);
+
+	}
+
+	public void init() {
 
 	}
 
@@ -69,6 +87,8 @@ public class Display extends Canvas implements Runnable {
 		double secondsPerTick = 1 / 60.0;
 		int tickCount = 0;
 		boolean ticked = false;
+
+		init();
 		while (running) {
 			long currentTime = System.nanoTime();
 			long passedTime = currentTime - previousTime;
@@ -95,7 +115,7 @@ public class Display extends Canvas implements Runnable {
 	}
 
 	public void tick() {
-		game.tick();
+		game.tick(input.key);
 	}
 
 	public void render() {

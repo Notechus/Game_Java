@@ -20,19 +20,13 @@ public class Screen extends Render {
 	}
 
 	public void render(Game game) {
+
 		for (int i = 0; i < getWidth() * getHeight(); i++) {
-			pixels[i] = 0; // it will remove trace of moving object
+			pixels[i] = 0;// it will remove trace of moving object
 		}
-		for (int i = 0; i < 50; i++) {
 
-			int anim = (int) (Math.sin((game.getTime() + i * 2) % 1000.0 / 100) * 100);
-			int anim2 = (int) (Math.cos((game.getTime() + i * 2) % 1000.0 / 100) * 100);
-
-			// draw(test, (getWidth() - 256) / 2 + anim, (getHeight() - 256) / 2
-			// + anim2);
-			render.floor();
-			draw(render, 0, 0);
-		}
+		render.floor(game);
+		draw(render, 0, 0);
 	}
 
 }
