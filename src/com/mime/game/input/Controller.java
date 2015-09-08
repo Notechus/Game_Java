@@ -10,7 +10,11 @@ public class Controller {
 	private double za;
 	private double rotationa;
 
-	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean turnLeft, boolean turnRight) {
+	// mouse
+	public static boolean turnLeft = false;
+	public static boolean turnRight = false;
+
+	public void tick(boolean forward, boolean back, boolean left, boolean right) {
 
 		double rotationSpeed = 0.025;
 		double walkSpeed = 1.0;

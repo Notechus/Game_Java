@@ -11,6 +11,8 @@ import java.awt.event.MouseMotionListener;
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
 
 	public boolean[] key = new boolean[65535];
+	public int mouseX;
+	public int mouseY;
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -20,8 +22,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		mouseX = e.getX();
+		mouseY = e.getY();
 	}
 
 	@Override
@@ -62,7 +64,6 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < key.length; i++) {
 			key[i] = false;
 		}
@@ -70,7 +71,6 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		int keyCode = e.getKeyCode();
 		if (keyCode > 0 && keyCode < key.length) {
 			key[keyCode] = true;

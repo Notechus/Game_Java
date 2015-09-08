@@ -49,7 +49,7 @@ public class Render3D extends Render {
 				zBuffer[x + y * width] = z;
 				pixels[x + y * width] = ((xPix & 15) * 16) | ((yPix & 15) * 16) << 8;
 
-				if (z > renderDistance) {
+				if (z > 500) {
 					pixels[x + y * width] = 0;
 				}
 			}

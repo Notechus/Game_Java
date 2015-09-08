@@ -1,8 +1,13 @@
 package com.mime.game;
 
 import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -11,6 +16,7 @@ import javax.swing.JFrame;
 
 import com.mime.game.graphics.Render;
 import com.mime.game.graphics.Screen;
+import com.mime.game.input.Controller;
 import com.mime.game.input.InputHandler;
 
 @SuppressWarnings("unused")
@@ -20,7 +26,7 @@ public class Display extends Canvas implements Runnable {
 
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE = "Game Client Pre-Alpha 0.03";
+	public static final String TITLE = "Game Client Pre-Alpha 0.05";
 
 	private Thread thread;
 	private boolean running = false;
@@ -29,6 +35,13 @@ public class Display extends Canvas implements Runnable {
 	private BufferedImage img;
 	private Screen screen;
 	private int[] pixels;
+	private String fps = "";
+
+	// mouse pos
+	private int newX = 0;
+	private int newY = 0;
+	private int oldX = 0;
+	private int oldY = 0;
 
 	// utils stuff
 	private Game game;
@@ -79,6 +92,26 @@ public class Display extends Canvas implements Runnable {
 		}
 	}
 
+	public void mouseInput() {
+		newX = input.mouseX;
+		newY = input.mouseY;
+
+		if (newX > oldX) {
+			Controller.turnRight = true;
+		}
+
+		if (newX < oldX) {
+			Controller.turnLeft = true;
+		}
+
+		if (newX == oldX) {
+			Controller.turnLeft = false;
+			Controller.turnRight = false;
+		}
+		oldX = newX;
+
+	}
+
 	public void run() {
 		// init fps
 		int frames = 0;
@@ -100,7 +133,7 @@ public class Display extends Canvas implements Runnable {
 				ticked = true;
 				tickCount++;
 				if (tickCount % 60 == 0) {
-					System.out.println(frames + "fps");
+					fps = frames + " fps";
 					previousTime += 1000;
 					frames = 0;
 				}
@@ -111,6 +144,7 @@ public class Display extends Canvas implements Runnable {
 			}
 			render();
 			frames++;
+			mouseInput();
 		}
 	}
 
@@ -134,16 +168,28 @@ public class Display extends Canvas implements Runnable {
 
 		Graphics g = bs.getDrawGraphics();
 		g.drawImage(img, 0, 0, WIDTH + 10, HEIGHT + 10, null);
+		g.setFont(new Font("Verdana", 0, 24));
+		g.setColor(Color.YELLOW);
+		g.drawString(fps, 720, 40);
+
 		g.dispose();
 		bs.show();
 	}
 
 	public static void main(String[] args) {
+
+		// cursor image
+		BufferedImage cursor = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
+
 		Display game = new Display();
 		JFrame frame = new JFrame(TITLE);
-		// add component display to jframe and pack
+		// add component display to frame and pack
 		frame.add(game);
 		frame.pack();
+
+		// set cursor to blank
+		frame.getContentPane().setCursor(blank);
 
 		// init frame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
