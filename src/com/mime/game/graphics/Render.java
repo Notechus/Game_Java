@@ -26,7 +26,7 @@ public class Render {
 	public void draw(Render render, int xOffset, int yOffset) {
 		for (int y = 0; y < render.getHeight(); y++) {
 			int yPix = y + yOffset;
-			if (yPix < 0 || yPix >= Display.HEIGHT) { // could also be height
+			if (yPix < 0 || yPix >= Display.HEIGHT) {
 				continue;
 			}
 			for (int x = 0; x < render.getWidth(); x++) {

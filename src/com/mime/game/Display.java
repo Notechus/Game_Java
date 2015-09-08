@@ -127,13 +127,15 @@ public class Display extends Canvas implements Runnable {
 			long passedTime = currentTime - previousTime;
 			previousTime = currentTime;
 			unprocessedSeconds += passedTime / 1000000000.0;
+			requestFocus();
+
 			while (unprocessedSeconds > secondsPerTick) {
 				tick();
 				unprocessedSeconds -= secondsPerTick;
 				ticked = true;
 				tickCount++;
 				if (tickCount % 60 == 0) {
-					fps = frames + " fps";
+					fps = frames + " FPS";
 					previousTime += 1000;
 					frames = 0;
 				}
@@ -168,9 +170,9 @@ public class Display extends Canvas implements Runnable {
 
 		Graphics g = bs.getDrawGraphics();
 		g.drawImage(img, 0, 0, WIDTH + 10, HEIGHT + 10, null);
-		g.setFont(new Font("Verdana", 0, 24));
+		g.setFont(new Font("Verdana", 0, (int) (WIDTH / 32)));
 		g.setColor(Color.YELLOW);
-		g.drawString(fps, 720, 40);
+		g.drawString(fps, (int) (0.9 * WIDTH), (int) (0.05 * HEIGHT));
 
 		g.dispose();
 		bs.show();

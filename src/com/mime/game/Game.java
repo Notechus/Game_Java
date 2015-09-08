@@ -20,8 +20,11 @@ public class Game {
 		boolean back = key[KeyEvent.VK_S];
 		boolean left = key[KeyEvent.VK_A];
 		boolean right = key[KeyEvent.VK_D];
+		boolean jump = key[KeyEvent.VK_SPACE];
+		boolean crouch = key[KeyEvent.VK_CONTROL];
+		boolean walk = key[KeyEvent.VK_SHIFT]; // we implicitly run
 
-		controls.tick(forward, back, left, right);
+		controls.tick(forward, back, left, right, jump, crouch, walk);
 	}
 
 	public int getTime() {
