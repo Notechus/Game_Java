@@ -1,5 +1,7 @@
 package com.mime.game.input;
 
+import com.mime.game.Display;
+
 public class Controller {
 
 	private double x; // left right
@@ -16,6 +18,7 @@ public class Controller {
 	public static boolean walking = false;
 	public static boolean crouchWalk = false;
 	public static boolean running = false;
+	public static boolean jumping = false;
 
 	// mouse
 	public static boolean turnLeft = false;
@@ -24,7 +27,7 @@ public class Controller {
 	public void tick(boolean forward, boolean back, boolean left, boolean right, boolean jump, boolean crouch,
 			boolean walk) {
 
-		double rotationSpeed = 0.025;
+		double rotationSpeed = 0.004 * Display.mouseSpeed;
 		double walkSpeed = 1.0;
 		double jumpHeight = 0.5;
 		double crouchHeight = 0.3;
@@ -36,44 +39,48 @@ public class Controller {
 			zMove++;
 			walking = true;
 		}
-
 		if (back) {
 			zMove--;
 			walking = true;
 		}
-
 		if (left) {
 			xMove--;
 			walking = true;
 		}
-
 		if (right) {
 			xMove++;
 			walking = true;
 		}
-
 		if (turnLeft) {
-			rotationa -= rotationSpeed;
+			if (InputHandler.mouseButton == 3) { // we cant move camera if we hold right button
+			} else {
+				rotationa -= rotationSpeed;
+			}
 		}
-
 		if (turnRight) {
-			rotationa += rotationSpeed;
+			if (InputHandler.mouseButton == 3) {
+			} else {
+				rotationa += rotationSpeed;
+			}
 		}
-
 		if (jump) {
+			crouch = false;
+			jumping = true;
+			walkSpeed = 0.0;
 			y += jumpHeight;
-			walk = true;
 		}
 		if (crouch) {
 			y -= crouchHeight;
-			walk = true;
 			crouchWalk = true;
+			jumping = false;
+			jump = false;
 			walkSpeed = 0.35;
 		}
 		if (walk) {
 			walkSpeed = 0.5;
 			walking = true;
 			running = false;
+			jumping = false;
 		}
 
 		if (!forward && !back && !left && !right && !turnRight && !turnLeft) {
@@ -90,7 +97,7 @@ public class Controller {
 		za += (zMove * Math.cos(rotation) - xMove * Math.sin(rotation)) * walkSpeed;
 
 		x += xa;
-		y *= 0.9;
+		// y *= 0.9;
 		z += za;
 		xa *= 0.1;
 		za *= 0.1;

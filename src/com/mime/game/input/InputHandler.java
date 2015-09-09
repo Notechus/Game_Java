@@ -13,6 +13,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	public boolean[] key = new boolean[65535];
 	public int mouseX;
 	public int mouseY;
+	public static int mouseButton;
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -29,6 +30,7 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		mouseButton = e.getButton();
 
 	}
 

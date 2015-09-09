@@ -42,6 +42,7 @@ public class Display extends Canvas implements Runnable {
 	private int newY = 0;
 	private int oldX = 0;
 	private int oldY = 0;
+	public static int mouseSpeed;
 
 	// utils stuff
 	private Game game;
@@ -108,6 +109,7 @@ public class Display extends Canvas implements Runnable {
 			Controller.turnLeft = false;
 			Controller.turnRight = false;
 		}
+		mouseSpeed = Math.abs(newX - oldX);
 		oldX = newX;
 
 	}
