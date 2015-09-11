@@ -3,18 +3,23 @@ package com.mime.game;
 import java.awt.event.KeyEvent;
 
 import com.mime.game.input.Controller;
+import com.mime.game.level.Level;
 
 public class Game {
 
 	private int time;
+	public static int stime;
 	public Controller controls;
+	public Level level;
 
 	public Game() {
 		controls = new Controller();
+		level = new Level(80, 80);
 	}
 
 	public void tick(boolean[] key) {
 		setTime(getTime() + 1);
+		stime++;
 
 		boolean forward = key[KeyEvent.VK_W];
 		boolean back = key[KeyEvent.VK_S];

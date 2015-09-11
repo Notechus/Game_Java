@@ -26,12 +26,12 @@ public class Render {
 	public void draw(Render render, int xOffset, int yOffset) {
 		for (int y = 0; y < render.getHeight(); y++) {
 			int yPix = y + yOffset;
-			if (yPix < 0 || yPix >= Display.HEIGHT) {
+			if (yPix < 0 || yPix >= Display.height) {
 				continue;
 			}
 			for (int x = 0; x < render.getWidth(); x++) {
 				int xPix = x + xOffset;
-				if (xPix < 0 || xPix >= Display.WIDTH) {
+				if (xPix < 0 || xPix >= Display.width) {
 					continue;
 				}
 				// alpha is used to track updates

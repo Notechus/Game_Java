@@ -29,9 +29,10 @@ public class Controller {
 
 		double rotationSpeed = 0.004 * Display.mouseSpeed;
 		double walkSpeed = 1.0;
-		double jumpHeight = 0.5;
+		double jumpCorrection = 1.0;// Math.sin(game.stime / 6.0) * 0.5;
+		double jumpHeight = 0.5 * jumpCorrection;
 		double crouchHeight = 0.3;
-		// double proneHeight = 0.8;
+
 		double xMove = 0;
 		double zMove = 0;
 
@@ -66,6 +67,7 @@ public class Controller {
 		if (jump) {
 			crouch = false;
 			jumping = true;
+			walk = false;
 			walkSpeed = 0.0;
 			y += jumpHeight;
 		}
@@ -97,7 +99,7 @@ public class Controller {
 		za += (zMove * Math.cos(rotation) - xMove * Math.sin(rotation)) * walkSpeed;
 
 		x += xa;
-		// y *= 0.9;
+		y *= 0.9;
 		z += za;
 		xa *= 0.1;
 		za *= 0.1;

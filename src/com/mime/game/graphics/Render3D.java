@@ -2,10 +2,13 @@ package com.mime.game.graphics;
 
 import com.mime.game.Game;
 import com.mime.game.input.Controller;
+import com.mime.game.level.Block;
+import com.mime.game.level.Level;
 
 public class Render3D extends Render {
 
 	public double[] zBuffer;
+	public double[] zBufferWall;
 	private static final double renderDistance = 5000.0;
 
 	// movement stuff
@@ -19,9 +22,14 @@ public class Render3D extends Render {
 	public Render3D(int width, int height) {
 		super(width, height);
 		zBuffer = new double[width * height];
+		zBufferWall = new double[width];
 	}
 
 	public void floor(Game game) {
+
+		for (int x = 0; x < width; x++) {
+			zBufferWall[x] = 0.0;
+		}
 
 		// borders of floor and ceiling displayed
 		double floorPosition = 8;
@@ -85,18 +93,49 @@ public class Render3D extends Render {
 				}
 			}
 		}
+
+		Level level = game.level;
+		int size = 20;
+
+		for (int xBlock = -size; xBlock <= size; xBlock++) {
+			for (int zBlock = -size; zBlock <= size; zBlock++) {
+				Block block = level.create(xBlock, zBlock);
+				Block east = level.create(xBlock + 1, zBlock);
+				Block south = level.create(xBlock, zBlock + 1);
+
+				if (block.isSolid()) {
+					if (!east.isSolid()) {
+						renderWall(xBlock + 1, xBlock + 1, zBlock, zBlock + 1, 0);
+						renderWall(xBlock + 1, xBlock + 1, zBlock, zBlock + 1, 0.5);
+					}
+					if (!south.isSolid()) {
+						renderWall(xBlock + 1, xBlock, zBlock + 1, zBlock + 1, 0);
+						renderWall(xBlock + 1, xBlock, zBlock + 1, zBlock + 1, 0.5);
+					}
+				} else {
+					if (east.isSolid()) {
+						renderWall(xBlock + 1, xBlock + 1, zBlock + 1, zBlock, 0);
+						renderWall(xBlock + 1, xBlock + 1, zBlock + 1, zBlock, 0.5);
+					}
+					if (south.isSolid()) {
+						renderWall(xBlock, xBlock + 1, zBlock + 1, zBlock + 1, 0);
+						renderWall(xBlock, xBlock + 1, zBlock + 1, zBlock + 1, 0.5);
+					}
+				}
+			}
+		}
 	}
 
 	public void renderWall(double xLeft, double xRight, double zDistanceLeft, double zDistanceRight, double yHeight) {
 
-		double upCorrect = 0.062; // walls doesnt jump with us
-		double rightCorrect = 0.062;// could be just correct but we make 3 in case it screws up
-		double forwardCorrect = 0.062;
-		double walkCorrect = -0.062;
+		double upCorrect = 0.0625; // walls doesnt jump with us
+		double rightCorrect = 0.0625;// could be just correct but we make 3 in case it screws up
+		double forwardCorrect = 0.0625;
+		double walkCorrect = -0.0625;
 
 		// left side calculation
-		double xcLeft = ((xLeft) - (right * rightCorrect)) * 2; // xcLeft = calculation of left wall x
-		double zcLeft = ((zDistanceLeft) - (forward * forwardCorrect)) * 2;
+		double xcLeft = ((xLeft / 2) - (right * rightCorrect)) * 2; // xcLeft = calculation of left wall x
+		double zcLeft = ((zDistanceLeft / 2) - (forward * forwardCorrect)) * 2;
 
 		double rotLeftSideX = xcLeft * cosine - zcLeft * sine;
 		double yCornerTL = ((-yHeight - (-up * upCorrect + (walking * walkCorrect)))) * 2;// TL=top left
@@ -104,16 +143,13 @@ public class Render3D extends Render {
 		double rotLeftSideZ = zcLeft * cosine + xcLeft * sine;
 
 		// right side calculation
-		double xcRight = ((xRight) - (right * rightCorrect)) * 2;
-		double zcRight = ((zDistanceRight) - (forward * forwardCorrect)) * 2;
+		double xcRight = ((xRight / 2) - (right * rightCorrect)) * 2;
+		double zcRight = ((zDistanceRight / 2) - (forward * forwardCorrect)) * 2;
 
 		double rotRightSideX = xcRight * cosine - zcRight * sine;
 		double yCornerTR = ((-yHeight - (-up * upCorrect + (walking * walkCorrect)))) * 2;
 		double yCornerBR = ((+0.5 - yHeight - (-up * upCorrect + (walking * walkCorrect)))) * 2;
 		double rotRightSideZ = zcRight * cosine + xcRight * sine;
-
-		double xPixelLeft = (rotLeftSideX / rotLeftSideZ * height + width / 2);
-		double xPixelRight = (rotRightSideX / rotRightSideZ * height + width / 2);
 
 		double tex30 = 0;
 		double tex40 = 8;
@@ -136,8 +172,11 @@ public class Render3D extends Render {
 			double clip0 = (clip - rotLeftSideZ) / (rotRightSideZ - rotLeftSideZ);
 			rotRightSideZ = rotLeftSideZ + (rotRightSideZ - rotLeftSideZ) * clip0;
 			rotRightSideX = rotLeftSideX + (rotRightSideX - rotLeftSideX) * clip0;
-			tex30 = tex30 + (tex40 - tex30) * clip0;
+			tex40 = tex30 + (tex40 - tex30) * clip0;
 		}
+
+		double xPixelLeft = (rotLeftSideX / rotLeftSideZ * height + width / 2);
+		double xPixelRight = (rotRightSideX / rotRightSideZ * height + width / 2);
 
 		if (xPixelLeft >= xPixelRight) {
 			return;
@@ -166,6 +205,12 @@ public class Render3D extends Render {
 
 		for (int x = xPixelLeftInt; x < xPixelRightInt; x++) {
 			double pixelRotation = (x - xPixelLeft) / (xPixelRight - xPixelLeft);
+			double zWall = (tex1 + (tex2 - tex1) * pixelRotation);
+
+			if (zBufferWall[x] > zWall) {
+				continue;
+			}
+			zBufferWall[x] = zWall;
 
 			int xTexture = (int) ((tex3 + tex4 * pixelRotation) / (tex1 + (tex2 - tex1) * pixelRotation));
 
