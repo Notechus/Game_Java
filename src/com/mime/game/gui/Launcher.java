@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import com.mime.game.Configuration;
 import com.mime.game.RunGame;
 
 public class Launcher extends JFrame {
@@ -19,6 +20,7 @@ public class Launcher extends JFrame {
 	protected JPanel window = new JPanel();
 	private JButton play, options, help, quit;
 	private Rectangle rplay, roptions, rhelp, rquit;
+	private Configuration config = new Configuration();
 
 	private int width = 320;
 	private int height = 480;
@@ -43,6 +45,7 @@ public class Launcher extends JFrame {
 		getWindow().setLayout(null);
 
 		if (id == 0) drawButtons();
+		repaint();
 	}
 
 	private void drawButtons() {
@@ -74,6 +77,7 @@ public class Launcher extends JFrame {
 
 		play.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				config.loadConfiguration("res/settings/config.xml");
 				dispose();
 				new RunGame();
 
@@ -82,6 +86,7 @@ public class Launcher extends JFrame {
 
 		options.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// config.saveConfiguration("sd", 1);
 				dispose();
 				new Options();
 			}
@@ -107,5 +112,13 @@ public class Launcher extends JFrame {
 
 	public void setWindow(JPanel window) {
 		this.window = window;
+	}
+
+	public Configuration getConfig() {
+		return config;
+	}
+
+	public void setConfig(Configuration config) {
+		this.config = config;
 	}
 }

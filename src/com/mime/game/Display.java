@@ -79,7 +79,15 @@ public class Display extends Canvas implements Runnable {
 
 	}
 
-	public int setGameWidth() {
+	public static void setWidth(String width_) {
+		width = Integer.getInteger(width_);
+	}
+
+	public static void setHeight(String height_) {
+		height = Integer.getInteger(height_);
+	}
+
+	public static int setGameWidth() {
 		if (selection == 0) {
 			width = 640;
 		}
@@ -104,7 +112,7 @@ public class Display extends Canvas implements Runnable {
 		return width;
 	}
 
-	public int setGameHeight() {
+	public static int setGameHeight() {
 		if (selection == 0) {
 			height = 480;
 		}
@@ -126,6 +134,14 @@ public class Display extends Canvas implements Runnable {
 		if (selection == 6) {
 			height = 1080;
 		}
+		return height;
+	}
+
+	public static int getGameWidth() {
+		return width;
+	}
+
+	public static int getGameHeight() {
 		return height;
 	}
 
@@ -228,9 +244,9 @@ public class Display extends Canvas implements Runnable {
 
 		Graphics g = bs.getDrawGraphics();
 		g.drawImage(img, 0, 0, width + 10, height + 10, null);
-		g.setFont(new Font("Verdana", 0, (int) (width / 32)));
+		g.setFont(new Font("Verdana", 0, 24));
 		g.setColor(Color.YELLOW);
-		g.drawString(fps, (int) (0.9 * width), (int) (0.05 * height));
+		g.drawString(fps, 15, 20);
 
 		g.dispose();
 		bs.show();

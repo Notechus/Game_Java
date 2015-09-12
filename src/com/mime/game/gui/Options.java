@@ -52,12 +52,13 @@ public class Options extends Launcher {
 		OK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Display.setSelection(resolution.getSelectedIndex());
-				System.out.println(resolution.getSelectedIndex());
+				int w = Display.getGameWidth();
+				int h = Display.getGameHeight();
+				getConfig().saveConfiguration("height", h);
+				getConfig().saveConfiguration("width", w);
 				dispose();
 				new Launcher(0);
 			}
 		});
-
 	}
-
 }
