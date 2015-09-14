@@ -213,14 +213,13 @@ public class Display extends Canvas implements Runnable {
 					previousTime += 1000;
 					frames = 0;
 				}
+				if (ticked) {
+					render();
+					frames++;
+				}
+				mouseInput();
 			}
-			if (ticked) {
-				render();
-				frames++;
-			}
-			render();
-			frames++;
-			mouseInput();
+
 		}
 	}
 
@@ -248,6 +247,20 @@ public class Display extends Canvas implements Runnable {
 		g.setColor(Color.YELLOW);
 		g.drawString(fps, 15, 20);
 
+		g.dispose();
+		bs.show();
+	}
+
+	public void renderMenu() {
+		BufferStrategy bs = this.getBufferStrategy();
+		if (bs == null) {
+			createBufferStrategy(3);
+			return;
+		}
+
+		Graphics g = bs.getDrawGraphics();
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, 800, 400);
 		g.dispose();
 		bs.show();
 	}

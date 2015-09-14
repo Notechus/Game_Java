@@ -2,6 +2,8 @@ package com.mime.game.level;
 
 import java.util.Random;
 
+import com.mime.game.graphics.Sprite;
+
 public class Level {
 
 	public Block[] blocks;
@@ -16,10 +18,11 @@ public class Level {
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				Block block = null;
-				if (random.nextInt(4) == 0) {
+				if (random.nextInt(8) == 0) {
 					block = new SolidBlock();
 				} else {
 					block = new Block();
+					block.addSprite(new Sprite(0, 0, 0));
 				}
 				blocks[x + y * width] = block;
 			}

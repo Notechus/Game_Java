@@ -124,6 +124,74 @@ public class Render3D extends Render {
 				}
 			}
 		}
+		for (int xBlock = -size; xBlock <= size; xBlock++) {
+			for (int zBlock = -size; zBlock <= size; zBlock++) {
+				Block block = level.create(xBlock, zBlock);
+				for (int s = 0; s < block.sprites.size(); s++) {
+					Sprite sprite = block.sprites.get(s);
+					renderSprite(xBlock + sprite.getX(), sprite.getY(), zBlock + sprite.getZ());
+				}
+			}
+		}
+	}
+
+	public void renderSprite(double x, double y, double z) {
+
+		double upCorrect = 0.0625; // walls doesnt jump with us
+		double rightCorrect = 0.0625;// could be just correct but we make 3 in case it screws up
+		double forwardCorrect = 0.0625;
+		double walkCorrect = -0.0625;
+
+		double xc = ((x / 2) - (right * rightCorrect)) * 2; // xcLeft = calculation of left wall x
+		double yc = ((y / 2) - (up * upCorrect)) * 2;
+		double zc = ((z / 2) - (forward * forwardCorrect)) * 2;
+
+		double rotX = xc * cosine - zc * sine; // rotation x
+		double rotY = yc;
+		double rotZ = zc * cosine - xc * sine;
+
+		double xCentre = 400.0;
+		double yCentre = 300.0;
+
+		double xPixel = rotX / rotZ * height + xCentre;
+		double yPixel = rotY / rotZ * height + yCentre;
+
+		double xPixelL = xPixel - 16 / zc;
+		double xPixelR = xPixel + 16 / zc;
+
+		double yPixelL = yPixel - 16 / zc;
+		double yPixelR = yPixel + 16 / zc;
+
+		// cast to int
+
+		int xpl = (int) xPixelL;
+		int xpr = (int) xPixelR;
+		int ypl = (int) yPixelL;
+		int ypr = (int) yPixelR;
+
+		// clipping fix
+		if (xpl < 0) {
+			xpl = 0;
+		}
+		if (xpr > width) {
+			xpr = width;
+		}
+		if (ypl < 0) {
+			ypl = 0;
+		}
+		if (ypr > height) {
+			ypr = height;
+		}
+
+		for (int yp = ypl; yp < ypr; yp++) {
+			for (int xp = xpl; xp < xpr; xp++) {
+				if (zBuffer[xp + yp * width] > rotZ) {
+					pixels[xp + yp * width] = 0xFF0000;
+					zBuffer[xp + yp * width] = rotZ;
+				}
+			}
+		}
+
 	}
 
 	public void renderWall(double xLeft, double xRight, double zDistanceLeft, double zDistanceRight, double yHeight) {

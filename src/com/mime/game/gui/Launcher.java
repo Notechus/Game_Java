@@ -11,19 +11,20 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.mime.game.Configuration;
+import com.mime.game.Display;
 import com.mime.game.RunGame;
 
 public class Launcher extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
+	// TODO: custom look and effects
 	protected JPanel window = new JPanel();
 	private JButton play, options, help, quit;
 	private Rectangle rplay, roptions, rhelp, rquit;
 	private Configuration config = new Configuration();
 
-	private int width = 320;
-	private int height = 480;
+	private int width = 800;
+	private int height = 400;
 	protected int button_width = 80;
 	protected int button_height = 40;
 
@@ -35,6 +36,7 @@ public class Launcher extends JFrame {
 			ex.printStackTrace();
 		}
 
+		setUndecorated(true);
 		setTitle("Game Launcher");
 		setSize(new Dimension(width, height));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -86,7 +88,6 @@ public class Launcher extends JFrame {
 
 		options.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// config.saveConfiguration("sd", 1);
 				dispose();
 				new Options();
 			}
